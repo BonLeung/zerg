@@ -10,8 +10,7 @@ namespace app\api\controller\v1;
 
 
 use app\api\validate\IDMustBePositiveInt;
-use app\api\validate\TestValidate;
-use think\Validate;
+use app\api\model\Banner as BannerModel;
 
 class Banner {
 
@@ -19,17 +18,11 @@ class Banner {
      * @url /banner/:id
      * @http GET
      * @param $id banner的id号
+     * @return string
      */
     public function getBanner($id) {
-
-        $data = [
-            'id' => $id
-        ];
-
-        $validate = new IDMustBePositiveInt();
-        $result = $validate -> batch() -> check($data);
-        if ($result) {
-            echo $validate -> getError();
-        }
+        (new IDMustBePositiveInt()) -> goCheck();
+        $banner = BannerModel::getBannerById($id);
+        return $banner;
     }
 }
