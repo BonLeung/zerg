@@ -15,8 +15,4 @@ use think\Route;
 
 // GET, POST, DELETE, PUT, *
 
-//Route::rule('hello', 'sample/Test/hello', 'GET', ['https' => false]);
-Route::rule('hello/:id', 'sample/Test/hello', 'POST | GET', ['https' => false]);
-//Route::get('hello', 'sample/Test/hello');
-//Route::post();
-//Route::any();
+Route::get('banner/:id', 'api/v1.Banner/getBanner');
