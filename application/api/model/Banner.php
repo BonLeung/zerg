@@ -9,9 +9,11 @@
 namespace app\api\model;
 
 
+use think\Exception;
+
 class Banner {
     public static function getBannerById($id) {
         // todo: 根据 banner id 获取 banner 信息
-        return "this is a banner";
+        return null;
     }
 }
