@@ -27,7 +27,7 @@ class Banner {
         // AOP 面向切面编程
         (new IDMustBePositiveInt()) -> goCheck();
 
-        $banner = BannerModel::getBannerById($id);
+        $banner = BannerModel::with('items') -> find($id);
         if (!$banner) {
             throw new BannerMissException();
         }
