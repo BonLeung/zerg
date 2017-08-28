@@ -19,10 +19,10 @@ class Theme extends Controller {
         (new IDCollection())->goCheck();
         $ids = explode(',', $ids);
         $result = ThemeModel::with(['headImg', 'topicImg'])->select($ids);
-        if (!$result) {
+        if ($result -> isEmpty()) {
             throw new ThemeException();
         }
-        return json($result);
+        return $result;
     }
 
     /**
@@ -34,9 +34,9 @@ class Theme extends Controller {
     public function getComplexOne($id) {
         (new IDMustBePositiveInt())->goCheck();
         $theme = ThemeModel::getThemeWidthProducts($id);
-        if (!$theme) {
+        if ($theme -> isEmpty()) {
             throw new ThemeException();
         }
-        return json($theme);
+        return $theme;
     }
 }
