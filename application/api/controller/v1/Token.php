@@ -16,7 +16,7 @@ class Token {
 
     public function getToken($code) {
         (new TokenGet()) -> goCheck();
-        $userToken = new UserToken();
+        $userToken = new UserToken($code);
         $token = $userToken -> get();
         return $token;
     }
