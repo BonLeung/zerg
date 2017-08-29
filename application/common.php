@@ -23,3 +23,15 @@ function curl_get($url, $httpCode = 0) {
     curl_close($ch);
     return $file_contents;
 }
+
+function getRandChars($length) {
+    $str = null;
+    $strPol = '!BCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+    $max = strlen($strPol) - 1;
+
+    for ($i = 0; $i < $length; $i++) {
+        $str .= $strPol($strPol[rand(0, $max)]);
+    }
+
+    return $str;
+}

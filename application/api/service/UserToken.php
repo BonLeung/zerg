@@ -9,10 +9,12 @@
 namespace app\api\service;
 
 
+use app\lib\exception\TokenException;
 use app\lib\exception\WeChatException;
 use think\Exception;
+use app\api\model\User as UserModel;
 
-class UserToken {
+class UserToken extends Token {
 
     protected $code;
     protected $wxAppID;
@@ -36,17 +38,58 @@ class UserToken {
             if ($loginFail) {
                 $this -> processLoginError($wxResult);
             } else {
-                $this -> grantToken($wxResult);
+                return $this -> grantToken($wxResult);
             }
         }
     }
 
     private function grantToken($wxResult) {
         // 拿到 openid
-        // 数据库里看一下，这个 openid 是否已经存在，如果 openid 存在，说明用户已存在，如果不存在，需要保存一条用户记录在数据库中
+        // 数据库里看一下，这个 openid 是否已经存在，
+        // 如果 openid 存在，说明用户已存在，如果不存在，需要保存一条用户记录在数据库中
         // 生成令牌，准备缓存数据库，写入缓存
         // 把令牌返回到客户端去
+        // key：令牌
+        // value：wxResult， uid， scope
         $openid = $wxResult['oppenid'];
+        $user = UserModel::getByOpenID($openid);
+        if ($user) {
+            $uid = $user -> id;
+        } else {
+            $uid = $this -> newUser($openid);
+        }
+        $cachedValue = $this -> prepareCachedValue($wxResult, $uid);
+        $token = $this -> saveToCache($cachedValue);
+        return $token;
+    }
+
+    private function saveToCache($cachedValue) {
+        $key = self::generateToken();
+        $value = json_encode($cachedValue);
+        $expire_in = config('setting.token_expire_in');
+
+        $request = cache($key, $value, $expire_in);
+        if (!$request) {
+            throw new TokenException([
+                'msg' => '服务器缓存异常',
+                'errorCode' => 10005
+            ]);
+        }
+        return $key;
+    }
+
+    private function prepareCachedValue($wxResult, $uid) {
+        $cachedValue = $wxResult;
+        $cachedValue['uid'] = $uid;
+        $cachedValue['scope'] = 16;
+        return $cachedValue;
+    }
+
+    private function newUser($openid) {
+        $user = UserModel::create([
+            'openid' => $openid
+        ]);
+        return $user -> id;
     }
 
     private function processLoginError($wxResult) {
