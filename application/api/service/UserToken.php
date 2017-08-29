@@ -24,8 +24,8 @@ class UserToken extends Token {
     function __construct($code) {
         $this -> code = $code;
         $this -> wxAppID = config('wx.app_id');
-        $this -> wxAppSecret = config('ex.app_secret');
-        $this -> wxLoginUrl = sprintf('wx.login_url', $this -> wxAppID, $this -> wxAppSecret, $this -> code);
+        $this -> wxAppSecret = config('wx.app_secret');
+        $this -> wxLoginUrl = sprintf(config('wx.login_url'), $this -> wxAppID, $this -> wxAppSecret, $this -> code);
     }
 
     public function get() {
@@ -51,7 +51,7 @@ class UserToken extends Token {
         // 把令牌返回到客户端去
         // key：令牌
         // value：wxResult， uid， scope
-        $openid = $wxResult['oppenid'];
+        $openid = $wxResult['openid'];
         $user = UserModel::getByOpenID($openid);
         if ($user) {
             $uid = $user -> id;

@@ -30,7 +30,7 @@ function getRandChars($length) {
     $max = strlen($strPol) - 1;
 
     for ($i = 0; $i < $length; $i++) {
-        $str .= $strPol($strPol[rand(0, $max)]);
+        $str .= $strPol[rand(0, $max)];
     }
 
     return $str;

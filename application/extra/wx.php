@@ -8,6 +8,6 @@
 
 return [
     'app_id' => 'wxde003a58ed01d97e',
-    'app_secret' => 'b334a5031de5157bff1e5a0a782765da',
+    'app_secret' => '3ab707f4bba1e222c216cbe88273dd9f',
     'login_url' => 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code'
 ];
