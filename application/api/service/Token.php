@@ -21,4 +21,8 @@ class Token {
 
         return md5($randChars . $timestamp . $salt);
     }
+
+    public static function getCurrentUid($token) {
+        
+    }
 }
