@@ -11,7 +11,11 @@ namespace app\api\controller\v1;
 
 use app\api\service\Order as OrderService;
 use app\api\service\Token as TokenService;
+use app\api\validate\IDMustBePositiveInt;
 use app\api\validate\OrderPlace;
+use app\api\validate\PagingParameter;
+use app\api\model\Order as OrderModel;
+use app\lib\exception\OrderException;
 
 class Order extends BaseController {
     // 用户在选择商品后，向 API 提交包含它所选商品的相关信息
@@ -28,8 +32,20 @@ class Order extends BaseController {
     protected $beforeActionList = [
         'checkExclusiveScope' => [
             'only' => 'placeOrder'
+        ],
+        'checkPrimaryScope' => [
+            'only' => 'getSummaryByUser'
         ]
     ];
+
+    public function getOrderDetail($id) {
+        (new IDMustBePositiveInt())  -> goCheck();
+        $orderDetail = OrderModel::get($id);
+        if (!$orderDetail) {
+            throw new OrderException();
+        }
+        return $orderDetail -> hidden(['prepay_id']);
+    }
 
     public function placeOrder() {
         (new OrderPlace()) -> goCheck();
@@ -39,5 +55,15 @@ class Order extends BaseController {
         $order = new OrderService();
         $status = $order -> place($uid, $products);
         return $status;
+    }
+
+    public function getSummaryByUser($page = 1, $size = 10) {
+        (new PagingParameter()) -> goCheck();
+        $uid = TokenService::getCurrentTokenVar('uid');
+        $pagingOrders = OrderModel::getSummaryByUser($uid, $page, $size);
+        $pagingOrdersArray = $pagingOrders -> toArray();
+        // 删除 next_item 属性
+        unset($pagingOrdersArray['next_item']);
+        return $pagingOrdersArray;
     }
 }
