@@ -15,7 +15,7 @@ use app\api\validate\IDMustBePositiveInt;
 use app\lib\exception\ProductException;
 
 class Product {
-    public function getRecent($count = 15) {
+    public function getRecent($count = 10) {
         (new Count())->goCheck();
         $products = ProductModel::getMostRecent($count);
         if ($products -> isEmpty()) {

@@ -34,7 +34,7 @@ class Theme extends Controller {
     public function getComplexOne($id) {
         (new IDMustBePositiveInt())->goCheck();
         $theme = ThemeModel::getThemeWidthProducts($id);
-        if ($theme -> isEmpty()) {
+        if (!$theme) {
             throw new ThemeException();
         }
         return $theme;
